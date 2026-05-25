@@ -14,6 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_symptom_analyses: {
+        Row: {
+          created_at: string
+          id: string
+          input_text: string
+          suggestions: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          input_text: string
+          suggestions?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          input_text?: string
+          suggestions?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      availability_slots: {
+        Row: {
+          created_at: string
+          ends_at: string
+          id: string
+          is_booked: boolean
+          psychologist_id: string
+          starts_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          id?: string
+          is_booked?: boolean
+          psychologist_id: string
+          starts_at: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          id?: string
+          is_booked?: boolean
+          psychologist_id?: string
+          starts_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_slots_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          created_at: string
+          id: string
+          patient_id: string
+          patient_note: string | null
+          psychologist_id: string
+          slot_id: string
+          status: Database["public"]["Enums"]["booking_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          patient_id: string
+          patient_note?: string | null
+          psychologist_id: string
+          slot_id: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          patient_id?: string
+          patient_note?: string | null
+          psychologist_id?: string
+          slot_id?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_psychologist_id_fkey"
+            columns: ["psychologist_id"]
+            isOneToOne: false
+            referencedRelation: "psychologist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "availability_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookmarks: {
         Row: {
           created_at: string
@@ -36,6 +143,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "bookmarks_disorder_id_fkey"
+            columns: ["disorder_id"]
+            isOneToOne: false
+            referencedRelation: "disorders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_assessments: {
+        Row: {
+          checked_criteria: Json
+          created_at: string
+          disorder_id: string | null
+          id: string
+          notes: string | null
+          patient_label: string
+          psychologist_id: string
+          risk_level: string
+          treatment_plan: string | null
+          updated_at: string
+        }
+        Insert: {
+          checked_criteria?: Json
+          created_at?: string
+          disorder_id?: string | null
+          id?: string
+          notes?: string | null
+          patient_label: string
+          psychologist_id: string
+          risk_level?: string
+          treatment_plan?: string | null
+          updated_at?: string
+        }
+        Update: {
+          checked_criteria?: Json
+          created_at?: string
+          disorder_id?: string | null
+          id?: string
+          notes?: string | null
+          patient_label?: string
+          psychologist_id?: string
+          risk_level?: string
+          treatment_plan?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_assessments_disorder_id_fkey"
             columns: ["disorder_id"]
             isOneToOne: false
             referencedRelation: "disorders"
@@ -143,6 +297,70 @@ export type Database = {
           },
         ]
       }
+      flashcard_reviews: {
+        Row: {
+          disorder_id: string
+          ease: number
+          id: string
+          reviewed_at: string
+          user_id: string
+        }
+        Insert: {
+          disorder_id: string
+          ease?: number
+          id?: string
+          reviewed_at?: string
+          user_id: string
+        }
+        Update: {
+          disorder_id?: string
+          ease?: number
+          id?: string
+          reviewed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flashcard_reviews_disorder_id_fkey"
+            columns: ["disorder_id"]
+            isOneToOne: false
+            referencedRelation: "disorders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          booking_id: string
+          content: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          booking_id: string
+          content: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          booking_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -169,6 +387,86 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      psychologist_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          currency: string
+          experience_years: number
+          fee_cents: number
+          id: string
+          languages: string[]
+          qualification: string
+          specializations: string[]
+          updated_at: string
+          user_id: string
+          verified: boolean
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          currency?: string
+          experience_years?: number
+          fee_cents?: number
+          id?: string
+          languages?: string[]
+          qualification: string
+          specializations?: string[]
+          updated_at?: string
+          user_id: string
+          verified?: boolean
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          currency?: string
+          experience_years?: number
+          fee_cents?: number
+          id?: string
+          languages?: string[]
+          qualification?: string
+          specializations?: string[]
+          updated_at?: string
+          user_id?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      quiz_attempts: {
+        Row: {
+          created_at: string
+          disorder_id: string | null
+          id: string
+          score: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          disorder_id?: string | null
+          id?: string
+          score: number
+          total: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          disorder_id?: string | null
+          id?: string
+          score?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_disorder_id_fkey"
+            columns: ["disorder_id"]
+            isOneToOne: false
+            referencedRelation: "disorders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -206,6 +504,7 @@ export type Database = {
     }
     Enums: {
       app_role: "student" | "psychologist" | "researcher" | "patient" | "admin"
+      booking_status: "pending" | "confirmed" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -334,6 +633,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["student", "psychologist", "researcher", "patient", "admin"],
+      booking_status: ["pending", "confirmed", "completed", "cancelled"],
     },
   },
 } as const
