@@ -10,15 +10,36 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResearchRouteImport } from './routes/research'
+import { Route as PsychologistsRouteImport } from './routes/psychologists'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LearnRouteImport } from './routes/learn'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ClinicalRouteImport } from './routes/clinical'
+import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as AnalyzerRouteImport } from './routes/analyzer'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PsychologistsIdRouteImport } from './routes/psychologists.$id'
+import { Route as PsychologistSetupRouteImport } from './routes/psychologist.setup'
+import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
+import { Route as LearnQuizRouteImport } from './routes/learn.quiz'
 import { Route as DisordersSlugRouteImport } from './routes/disorders.$slug'
 
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PsychologistsRoute = PsychologistsRouteImport.update({
+  id: '/psychologists',
+  path: '/psychologists',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -31,15 +52,60 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClinicalRoute = ClinicalRouteImport.update({
+  id: '/clinical',
+  path: '/clinical',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingsRoute = BookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyzerRoute = AnalyzerRouteImport.update({
+  id: '/analyzer',
+  path: '/analyzer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PsychologistsIdRoute = PsychologistsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PsychologistsRoute,
+} as any)
+const PsychologistSetupRoute = PsychologistSetupRouteImport.update({
+  id: '/psychologist/setup',
+  path: '/psychologist/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
+  id: '/messages/$bookingId',
+  path: '/messages/$bookingId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnQuizRoute = LearnQuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => LearnRoute,
 } as any)
 const DisordersSlugRoute = DisordersSlugRouteImport.update({
   id: '/disorders/$slug',
@@ -49,63 +115,138 @@ const DisordersSlugRoute = DisordersSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/analyzer': typeof AnalyzerRoute
+  '/bookings': typeof BookingsRoute
+  '/clinical': typeof ClinicalRoute
   '/dashboard': typeof DashboardRoute
+  '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/psychologists': typeof PsychologistsRouteWithChildren
+  '/research': typeof ResearchRoute
   '/search': typeof SearchRoute
   '/disorders/$slug': typeof DisordersSlugRoute
+  '/learn/quiz': typeof LearnQuizRoute
+  '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/psychologist/setup': typeof PsychologistSetupRoute
+  '/psychologists/$id': typeof PsychologistsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/analyzer': typeof AnalyzerRoute
+  '/bookings': typeof BookingsRoute
+  '/clinical': typeof ClinicalRoute
   '/dashboard': typeof DashboardRoute
+  '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/psychologists': typeof PsychologistsRouteWithChildren
+  '/research': typeof ResearchRoute
   '/search': typeof SearchRoute
   '/disorders/$slug': typeof DisordersSlugRoute
+  '/learn/quiz': typeof LearnQuizRoute
+  '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/psychologist/setup': typeof PsychologistSetupRoute
+  '/psychologists/$id': typeof PsychologistsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/analyzer': typeof AnalyzerRoute
+  '/bookings': typeof BookingsRoute
+  '/clinical': typeof ClinicalRoute
   '/dashboard': typeof DashboardRoute
+  '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/psychologists': typeof PsychologistsRouteWithChildren
+  '/research': typeof ResearchRoute
   '/search': typeof SearchRoute
   '/disorders/$slug': typeof DisordersSlugRoute
+  '/learn/quiz': typeof LearnQuizRoute
+  '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/psychologist/setup': typeof PsychologistSetupRoute
+  '/psychologists/$id': typeof PsychologistsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/analyzer'
+    | '/bookings'
+    | '/clinical'
     | '/dashboard'
+    | '/learn'
     | '/login'
     | '/onboarding'
+    | '/psychologists'
+    | '/research'
     | '/search'
     | '/disorders/$slug'
+    | '/learn/quiz'
+    | '/messages/$bookingId'
+    | '/psychologist/setup'
+    | '/psychologists/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
+    | '/analyzer'
+    | '/bookings'
+    | '/clinical'
     | '/dashboard'
+    | '/learn'
     | '/login'
     | '/onboarding'
+    | '/psychologists'
+    | '/research'
     | '/search'
     | '/disorders/$slug'
+    | '/learn/quiz'
+    | '/messages/$bookingId'
+    | '/psychologist/setup'
+    | '/psychologists/$id'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/analyzer'
+    | '/bookings'
+    | '/clinical'
     | '/dashboard'
+    | '/learn'
     | '/login'
     | '/onboarding'
+    | '/psychologists'
+    | '/research'
     | '/search'
     | '/disorders/$slug'
+    | '/learn/quiz'
+    | '/messages/$bookingId'
+    | '/psychologist/setup'
+    | '/psychologists/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  AnalyzerRoute: typeof AnalyzerRoute
+  BookingsRoute: typeof BookingsRoute
+  ClinicalRoute: typeof ClinicalRoute
   DashboardRoute: typeof DashboardRoute
+  LearnRoute: typeof LearnRouteWithChildren
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  PsychologistsRoute: typeof PsychologistsRouteWithChildren
+  ResearchRoute: typeof ResearchRoute
   SearchRoute: typeof SearchRoute
   DisordersSlugRoute: typeof DisordersSlugRoute
+  MessagesBookingIdRoute: typeof MessagesBookingIdRoute
+  PsychologistSetupRoute: typeof PsychologistSetupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +256,20 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/psychologists': {
+      id: '/psychologists'
+      path: '/psychologists'
+      fullPath: '/psychologists'
+      preLoaderRoute: typeof PsychologistsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -131,11 +286,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clinical': {
+      id: '/clinical'
+      path: '/clinical'
+      fullPath: '/clinical'
+      preLoaderRoute: typeof ClinicalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookings': {
+      id: '/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analyzer': {
+      id: '/analyzer'
+      path: '/analyzer'
+      fullPath: '/analyzer'
+      preLoaderRoute: typeof AnalyzerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -144,6 +334,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/psychologists/$id': {
+      id: '/psychologists/$id'
+      path: '/$id'
+      fullPath: '/psychologists/$id'
+      preLoaderRoute: typeof PsychologistsIdRouteImport
+      parentRoute: typeof PsychologistsRoute
+    }
+    '/psychologist/setup': {
+      id: '/psychologist/setup'
+      path: '/psychologist/setup'
+      fullPath: '/psychologist/setup'
+      preLoaderRoute: typeof PsychologistSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages/$bookingId': {
+      id: '/messages/$bookingId'
+      path: '/messages/$bookingId'
+      fullPath: '/messages/$bookingId'
+      preLoaderRoute: typeof MessagesBookingIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn/quiz': {
+      id: '/learn/quiz'
+      path: '/quiz'
+      fullPath: '/learn/quiz'
+      preLoaderRoute: typeof LearnQuizRouteImport
+      parentRoute: typeof LearnRoute
     }
     '/disorders/$slug': {
       id: '/disorders/$slug'
@@ -155,24 +373,45 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface LearnRouteChildren {
+  LearnQuizRoute: typeof LearnQuizRoute
+}
+
+const LearnRouteChildren: LearnRouteChildren = {
+  LearnQuizRoute: LearnQuizRoute,
+}
+
+const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
+
+interface PsychologistsRouteChildren {
+  PsychologistsIdRoute: typeof PsychologistsIdRoute
+}
+
+const PsychologistsRouteChildren: PsychologistsRouteChildren = {
+  PsychologistsIdRoute: PsychologistsIdRoute,
+}
+
+const PsychologistsRouteWithChildren = PsychologistsRoute._addFileChildren(
+  PsychologistsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  AnalyzerRoute: AnalyzerRoute,
+  BookingsRoute: BookingsRoute,
+  ClinicalRoute: ClinicalRoute,
   DashboardRoute: DashboardRoute,
+  LearnRoute: LearnRouteWithChildren,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  PsychologistsRoute: PsychologistsRouteWithChildren,
+  ResearchRoute: ResearchRoute,
   SearchRoute: SearchRoute,
   DisordersSlugRoute: DisordersSlugRoute,
+  MessagesBookingIdRoute: MessagesBookingIdRoute,
+  PsychologistSetupRoute: PsychologistSetupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
