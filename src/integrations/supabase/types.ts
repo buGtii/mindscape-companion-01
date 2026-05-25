@@ -253,39 +253,96 @@ export type Database = {
           },
         ]
       }
+      disorder_relations: {
+        Row: {
+          created_at: string
+          from_disorder_id: string
+          id: string
+          notes: string | null
+          relation_type: string
+          to_disorder_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_disorder_id: string
+          id?: string
+          notes?: string | null
+          relation_type?: string
+          to_disorder_id: string
+        }
+        Update: {
+          created_at?: string
+          from_disorder_id?: string
+          id?: string
+          notes?: string | null
+          relation_type?: string
+          to_disorder_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disorder_relations_from_disorder_id_fkey"
+            columns: ["from_disorder_id"]
+            isOneToOne: false
+            referencedRelation: "disorders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disorder_relations_to_disorder_id_fkey"
+            columns: ["to_disorder_id"]
+            isOneToOne: false
+            referencedRelation: "disorders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       disorders: {
         Row: {
           category_id: string | null
+          common_symptoms: string[]
           created_at: string
           dsm_code: string | null
           id: string
+          is_premium: boolean
           name: string
           overview: string | null
           prevalence: string | null
           slug: string
+          source_citation: string | null
+          source_page: number | null
           summary: string
+          synonyms: string[]
         }
         Insert: {
           category_id?: string | null
+          common_symptoms?: string[]
           created_at?: string
           dsm_code?: string | null
           id?: string
+          is_premium?: boolean
           name: string
           overview?: string | null
           prevalence?: string | null
           slug: string
+          source_citation?: string | null
+          source_page?: number | null
           summary: string
+          synonyms?: string[]
         }
         Update: {
           category_id?: string | null
+          common_symptoms?: string[]
           created_at?: string
           dsm_code?: string | null
           id?: string
+          is_premium?: boolean
           name?: string
           overview?: string | null
           prevalence?: string | null
           slug?: string
+          source_citation?: string | null
+          source_page?: number | null
           summary?: string
+          synonyms?: string[]
         }
         Relationships: [
           {
@@ -468,6 +525,36 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          id: string
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -501,6 +588,9 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_premium: { Args: { _uid: string }; Returns: boolean }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "student" | "psychologist" | "researcher" | "patient" | "admin"
