@@ -3,16 +3,18 @@ import { useEffect, useState } from "react";
 import { useAuth, type AppRole } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Stethoscope, Microscope, HeartHandshake } from "lucide-react";
+import { GraduationCap, Stethoscope, Microscope, HeartHandshake, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/onboarding")({ component: Onboarding });
 
-const choices: { role: AppRole; icon: typeof GraduationCap; title: string; body: string }[] = [
+type Choice = { role: AppRole; icon: typeof GraduationCap; title: string; body: string; restricted?: boolean };
+
+const choices: Choice[] = [
   { role: "student", icon: GraduationCap, title: "Student", body: "I'm studying psychology or a related field." },
-  { role: "psychologist", icon: Stethoscope, title: "Psychologist", body: "I'm a licensed clinician." },
-  { role: "researcher", icon: Microscope, title: "Researcher", body: "I work with mental health data." },
   { role: "patient", icon: HeartHandshake, title: "Patient", body: "I'm exploring mental health for myself." },
+  { role: "psychologist", icon: Stethoscope, title: "Psychologist", body: "Licensed clinician. Requires admin verification.", restricted: true },
+  { role: "researcher", icon: Microscope, title: "Researcher", body: "Mental-health researcher. Requires admin approval.", restricted: true },
 ];
 
 function Onboarding() {
@@ -25,8 +27,13 @@ function Onboarding() {
 
   const save = async () => {
     if (!picked || !user) return;
+    const choice = choices.find((c) => c.role === picked)!;
+    if (choice.restricted) {
+      toast.info("That role requires admin approval. Please contact an administrator after continuing.");
+      navigate({ to: "/dashboard" });
+      return;
+    }
     setBusy(true);
-    // Remove default 'patient' if user picked something else
     if (picked !== "patient") {
       await supabase.from("user_roles").delete().eq("user_id", user.id).eq("role", "patient");
     }
@@ -49,8 +56,13 @@ function Onboarding() {
           const active = picked === c.role;
           return (
             <button key={c.role} onClick={() => setPicked(c.role)}
-              className={`rounded-2xl border p-5 text-left transition ${active ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/40"}`}>
+              className={`relative rounded-2xl border p-5 text-left transition ${active ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/40"}`}>
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-secondary text-secondary-foreground"><c.icon className="h-5 w-5" /></span>
+              {c.restricted && (
+                <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+                  <Lock className="h-3 w-3" /> Admin approval
+                </span>
+              )}
               <h3 className="mt-4 font-display text-xl">{c.title}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
             </button>
@@ -58,6 +70,9 @@ function Onboarding() {
         })}
       </div>
       <Button className="mt-8" size="lg" disabled={!picked || busy} onClick={save}>Continue</Button>
+      <p className="mt-4 text-xs text-muted-foreground">
+        For security, the Psychologist and Researcher roles must be granted by an administrator after credential verification.
+      </p>
     </div>
   );
 }
