@@ -36,7 +36,7 @@ function Page() {
   useEffect(() => {
     supabase
       .from("bookings")
-      .select("id, status, patient_id, psychologist_id, slot:availability_slots(starts_at), psy:psychologist_profiles(qualification), client:profiles!bookings_patient_id_fkey(display_name)")
+      .select("id, status, patient_id, psychologist_id, slot:availability_slots(starts_at), psy:psychologist_profiles(qualification)")
       .eq("id", bookingId).maybeSingle()
       .then(({ data }) => setBooking(data));
 
@@ -78,7 +78,7 @@ function Page() {
     typingChRef.current.send({ type: "broadcast", event: "typing", payload: { userId: user.id } });
   };
 
-  const otherName = isPsy ? (booking?.client?.display_name ?? "Client") : (booking?.psy?.qualification ?? "Practitioner");
+  const otherName = isPsy ? "Client" : (booking?.psy?.qualification ?? "Practitioner");
   const initials = otherName.split(" ").map((s: string) => s[0]).join("").slice(0, 2).toUpperCase();
 
   // Group messages by day

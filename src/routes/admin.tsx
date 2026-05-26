@@ -32,11 +32,11 @@ function Page() {
 
   const { data: psys } = useQuery({
     queryKey: ["admin-psy"],
-    queryFn: async () => (await supabase.from("psychologist_profiles").select("*, profile:profiles!psychologist_profiles_user_id_fkey(display_name)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("psychologist_profiles").select("*").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: allRoles } = useQuery({
     queryKey: ["admin-roles"],
-    queryFn: async () => (await supabase.from("user_roles").select("user_id, role, created_at, profile:profiles!user_roles_user_id_fkey(display_name)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("user_roles").select("user_id, role, created_at").order("created_at", { ascending: false })).data ?? [],
   });
 
   if (!roles.includes("admin"))
@@ -109,10 +109,10 @@ function Page() {
             <Card key={p.id} className="flex items-center justify-between p-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{p.profile?.display_name ?? "Practitioner"}</span>
+                  <span className="font-medium">{p.qualification}</span>
                   {p.verified ? <Badge>Verified</Badge> : <Badge variant="secondary">Pending</Badge>}
                 </div>
-                <div className="text-xs text-muted-foreground">{p.qualification} · {p.experience_years}y · {(p.specializations ?? []).join(", ")}</div>
+                <div className="text-xs text-muted-foreground">{p.experience_years}y · {(p.specializations ?? []).join(", ")}</div>
                 <div className="mt-1 font-mono text-[10px] text-muted-foreground">{p.user_id}</div>
               </div>
               <Button variant={p.verified ? "outline" : "default"} onClick={() => toggleVerify(p.id, !p.verified)}>
@@ -126,14 +126,14 @@ function Page() {
         <Card className="mt-3 overflow-x-auto p-0">
           <table className="w-full text-sm">
             <thead className="border-b bg-secondary/50 text-left">
-              <tr><th className="p-3">User</th><th className="p-3">User ID</th><th className="p-3">Role</th><th className="p-3"></th></tr>
+              <tr><th className="p-3">User ID</th><th className="p-3">Role</th><th className="p-3">Granted</th><th className="p-3"></th></tr>
             </thead>
             <tbody>
               {(allRoles ?? []).map((r: any) => (
                 <tr key={`${r.user_id}-${r.role}`} className="border-b">
-                  <td className="p-3">{r.profile?.display_name ?? "—"}</td>
                   <td className="p-3 font-mono text-[11px] text-muted-foreground">{r.user_id}</td>
                   <td className="p-3"><Badge variant="secondary">{r.role}</Badge></td>
+                  <td className="p-3 text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</td>
                   <td className="p-3 text-right">
                     {(r.role === "psychologist" || r.role === "researcher") && (
                       <Button size="sm" variant="ghost" onClick={() => revoke(r.user_id, r.role)}>Revoke</Button>

@@ -30,7 +30,7 @@ function Page() {
     queryFn: async () => {
       const { data } = await supabase
         .from("bookings")
-        .select("id, status, created_at, patient_id, psychologist_id, slot:availability_slots(starts_at, ends_at), psy:psychologist_profiles(qualification), client:profiles!bookings_patient_id_fkey(display_name)")
+        .select("id, status, created_at, patient_id, psychologist_id, slot:availability_slots(starts_at, ends_at), psy:psychologist_profiles(qualification)")
         .order("created_at", { ascending: false });
       return data ?? [];
     },
@@ -70,7 +70,7 @@ function Page() {
           {(data ?? []).length === 0 && <p className="text-muted-foreground">No bookings yet.</p>}
           {(data ?? []).map((b: any) => {
             const when = b.slot?.starts_at ? new Date(b.slot.starts_at) : null;
-            const label = isPsy ? (b.client?.display_name ?? "Client") : (b.psy?.qualification ?? "Session");
+            const label = isPsy ? "Client session" : (b.psy?.qualification ?? "Session");
             return (
               <Card key={b.id} className="p-4">
                 <div className="flex items-start justify-between gap-3">
