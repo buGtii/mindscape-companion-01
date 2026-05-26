@@ -12,8 +12,8 @@ type Choice = { role: AppRole; icon: typeof GraduationCap; title: string; body: 
 
 const choices: Choice[] = [
   { role: "student", icon: GraduationCap, title: "Student", body: "I'm studying psychology or a related field." },
-  { role: "patient", icon: HeartHandshake, title: "Patient", body: "I'm exploring mental health for myself." },
-  { role: "psychologist", icon: Stethoscope, title: "Psychologist", body: "Licensed clinician. Requires admin verification.", restricted: true },
+  { role: "patient", icon: HeartHandshake, title: "Client", body: "I'm exploring mental health support for myself." },
+  { role: "psychologist", icon: Stethoscope, title: "Practitioner", body: "Psychologist, counselor, or licensed clinician. Requires admin verification.", restricted: true },
   { role: "researcher", icon: Microscope, title: "Researcher", body: "Mental-health researcher. Requires admin approval.", restricted: true },
 ];
 

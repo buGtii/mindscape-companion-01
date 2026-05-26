@@ -17,7 +17,7 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-5 text-sm text-muted-foreground md:flex">
           <Link to="/search" className="hover:text-foreground">DSM</Link>
           <Link to="/analyzer" className="hover:text-foreground">AI Analyzer</Link>
-          <Link to="/psychologists" className="hover:text-foreground">Psychologists</Link>
+          <Link to="/psychologists" className="hover:text-foreground">Practitioners</Link>
           {user && <Link to="/bookings" className="hover:text-foreground">Bookings</Link>}
           {is("student") && <Link to="/learn" className="hover:text-foreground">Learn</Link>}
           {is("researcher") && <Link to="/research" className="hover:text-foreground">Research</Link>}
