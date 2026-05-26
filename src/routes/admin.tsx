@@ -64,7 +64,7 @@ function Page() {
   };
 
   const revoke = async (uid: string, role: string) => {
-    const { error } = await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", role);
+    const { error } = await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", role as "psychologist" | "researcher");
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["admin-roles"] });
   };
