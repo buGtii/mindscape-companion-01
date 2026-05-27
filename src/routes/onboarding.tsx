@@ -63,9 +63,7 @@ function Onboarding() {
       return;
     }
     setBusy(true);
-    if (picked !== "patient") {
-      await supabase.from("user_roles").delete().eq("user_id", user.id).eq("role", "patient");
-    }
+    await supabase.from("user_roles").delete().eq("user_id", user.id).in("role", ["student", "patient"]);
     const { error } = await supabase.from("user_roles").insert({ user_id: user.id, role: picked });
     if (error && !error.message.includes("duplicate")) {
       toast.error(error.message);
