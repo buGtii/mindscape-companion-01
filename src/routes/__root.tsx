@@ -1,9 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet, Link, createRootRouteWithContext, useRouter, HeadContent, Scripts } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Capacitor } from "@capacitor/core";
-import { SplashScreen } from "@capacitor/splash-screen";
-import { StatusBar, Style } from "@capacitor/status-bar";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import appCss from "../styles.css?url";
@@ -75,10 +72,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
-    void StatusBar.setStyle({ style: Style.Light });
-    void StatusBar.setBackgroundColor({ color: "#f8f7ef" });
-    void SplashScreen.hide();
+    void (async () => {
+      const { Capacitor } = await import("@capacitor/core");
+      if (!Capacitor.isNativePlatform()) return;
+      const [{ SplashScreen }, { StatusBar, Style }] = await Promise.all([
+        import("@capacitor/splash-screen"),
+        import("@capacitor/status-bar"),
+      ]);
+      await StatusBar.setStyle({ style: Style.Light });
+      await StatusBar.setBackgroundColor({ color: "#f8f7ef" });
+      await SplashScreen.hide();
+    })();
   }, []);
   return (
     <QueryClientProvider client={queryClient}>
