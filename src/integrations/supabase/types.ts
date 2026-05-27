@@ -635,10 +635,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      approve_role_request: {
-        Args: { _admin_note?: string; _criteria?: Json; _request_id: string }
-        Returns: undefined
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -647,10 +643,6 @@ export type Database = {
         Returns: boolean
       }
       is_premium: { Args: { _uid: string }; Returns: boolean }
-      reject_role_request: {
-        Args: { _admin_note?: string; _criteria?: Json; _request_id: string }
-        Returns: undefined
-      }
     }
     Enums: {
       app_role: "student" | "psychologist" | "researcher" | "patient" | "admin"
