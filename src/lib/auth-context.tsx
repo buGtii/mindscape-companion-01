@@ -23,20 +23,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadRoles = async (uid: string) => {
     const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-    setRoles((data ?? []).map((r) => r.role as AppRole));
+    const nextRoles = (data ?? []).map((r) => r.role as AppRole);
+    setRoles(nextRoles);
+    return nextRoles;
   };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+      setLoading(true);
       setSession(s);
       setUser(s?.user ?? null);
-      if (s?.user) setTimeout(() => loadRoles(s.user.id), 0);
-      else setRoles([]);
+      if (s?.user) setTimeout(() => void loadRoles(s.user.id).finally(() => setLoading(false)), 0);
+      else { setRoles([]); setLoading(false); }
     });
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
       setUser(s?.user ?? null);
-      if (s?.user) loadRoles(s.user.id);
+      if (s?.user) return loadRoles(s.user.id).finally(() => setLoading(false));
+      setRoles([]);
       setLoading(false);
     });
     return () => subscription.unsubscribe();
