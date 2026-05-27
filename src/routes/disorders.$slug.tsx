@@ -12,9 +12,16 @@ export const Route = createFileRoute("/disorders/$slug")({ component: DisorderPa
 
 type Detail = {
   id: string; name: string; dsm_code: string | null; summary: string; overview: string | null; prevalence: string | null;
+  common_symptoms: string[] | null;
   disorder_categories: { name: string; slug: string } | null;
   disorder_criteria: { id: string; label: string; description: string; sort_order: number }[];
 };
+
+function symptomGroups(symptoms: string[] = []) {
+  const labels = ["Cognitive", "Emotional", "Physical"];
+  const size = Math.ceil(symptoms.length / labels.length) || 1;
+  return labels.map((label, i) => ({ label, items: symptoms.slice(i * size, i * size + size) })).filter((g) => g.items.length > 0);
+}
 
 function DisorderPage() {
   const { slug } = Route.useParams();
@@ -28,7 +35,7 @@ function DisorderPage() {
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase.from("disorders")
-        .select("id,name,dsm_code,summary,overview,prevalence,disorder_categories(name,slug),disorder_criteria(id,label,description,sort_order)")
+        .select("id,name,dsm_code,summary,overview,prevalence,common_symptoms,disorder_categories(name,slug),disorder_criteria(id,label,description,sort_order)")
         .eq("slug", slug).maybeSingle();
       if (error || !data) { setLoading(false); return; }
       const detail = data as unknown as Detail;
@@ -79,6 +86,22 @@ function DisorderPage() {
           {d.overview && <p className="mt-3 text-muted-foreground">{d.overview}</p>}
           {d.prevalence && <p className="mt-4 text-sm"><strong>Prevalence:</strong> <span className="text-muted-foreground">{d.prevalence}</span></p>}
         </section>
+
+        {(d.common_symptoms ?? []).length > 0 && (
+          <section className="mt-6 rounded-2xl border border-border/60 bg-card p-6" style={{ boxShadow: "var(--shadow-soft)" }}>
+            <h2 className="font-display text-xl">Symptoms</h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {symptomGroups(d.common_symptoms ?? []).map((group) => (
+                <div key={group.label} className="rounded-xl bg-muted/50 p-4">
+                  <h3 className="text-xs font-semibold uppercase text-muted-foreground">{group.label}</h3>
+                  <ul className="mt-2 space-y-1 text-sm">
+                    {group.items.map((item) => <li key={item}>• {item}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="mt-6 rounded-2xl border border-border/60 bg-card p-6" style={{ boxShadow: "var(--shadow-soft)" }}>
           <div className="flex items-baseline justify-between">
