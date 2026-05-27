@@ -8,9 +8,9 @@ export const Route = createFileRoute("/")({ component: Landing });
 
 const roles = [
   { icon: GraduationCap, title: "Students", body: "Study disorders, criteria and clinical vignettes with flashcards and quizzes." },
-  { icon: Stethoscope, title: "Psychologists", body: "Differential diagnosis support, DSM checklists, and patient consultations." },
+  { icon: Stethoscope, title: "Practitioners", body: "Differential support, DSM checklists, and client consultations for psychologists and counselors." },
   { icon: Microscope, title: "Researchers", body: "Structured DSM data, comorbidity views, and exports for analysis." },
-  { icon: HeartHandshake, title: "Patients", body: "Plain-language explanations and access to verified clinicians." },
+  { icon: HeartHandshake, title: "Clients", body: "Plain-language explanations and access to verified practitioners." },
 ];
 
 function Landing() {
@@ -28,7 +28,7 @@ function Landing() {
                 A calmer way to learn,<br />practice, and heal.
               </h1>
               <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-                Lumen is a mental-health ecosystem powered by DSM-5-TR — built for students, clinicians, researchers, and patients.
+                Lumen is a mental-health ecosystem powered by DSM-5-TR — built for students, practitioners, researchers, and clients.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button size="lg" asChild><Link to="/login">Create your account <ArrowRight className="ml-1 h-4 w-4" /></Link></Button>
