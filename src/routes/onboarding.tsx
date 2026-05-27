@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { useAuth, type AppRole } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { GraduationCap, Stethoscope, Microscope, HeartHandshake, Lock } from "lucide-react";
 import { toast } from "sonner";
 
@@ -20,6 +23,11 @@ const choices: Choice[] = [
 function Onboarding() {
   const { user, loading, refreshRoles } = useAuth();
   const [picked, setPicked] = useState<AppRole | null>(null);
+  const [displayName, setDisplayName] = useState("");
+  const [professionalTitle, setProfessionalTitle] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [organization, setOrganization] = useState("");
+  const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +37,28 @@ function Onboarding() {
     if (!picked || !user) return;
     const choice = choices.find((c) => c.role === picked)!;
     if (choice.restricted) {
-      toast.info("That role requires admin approval. Please contact an administrator after continuing.");
+      setBusy(true);
+      const { error } = await supabase.from("role_approval_requests").insert({
+        user_id: user.id,
+        requested_role: picked,
+        display_name: displayName || user.email,
+        professional_title: professionalTitle,
+        license_number: licenseNumber,
+        organization,
+        reason,
+      });
+      setBusy(false);
+      if (error) {
+        if (error.message.includes("duplicate")) {
+          toast.info("Your approval request is already pending.");
+          navigate({ to: "/dashboard" });
+          return;
+        }
+        toast.error(error.message);
+        return;
+      }
+      localStorage.setItem("lumen:selected-role", picked);
+      toast.success("Approval request submitted. You can keep using the app as a Client while admin reviews it.");
       navigate({ to: "/dashboard" });
       return;
     }
@@ -44,8 +73,12 @@ function Onboarding() {
       return;
     }
     await refreshRoles();
+    localStorage.setItem("lumen:selected-role", picked);
     navigate({ to: "/dashboard" });
   };
+
+  const selectedChoice = choices.find((c) => c.role === picked);
+  const needsApproval = !!selectedChoice?.restricted;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
@@ -69,9 +102,22 @@ function Onboarding() {
           );
         })}
       </div>
+      {needsApproval && (
+        <Card className="mt-6 space-y-3 p-5">
+          <h2 className="font-display text-xl">Approval request</h2>
+          <p className="text-sm text-muted-foreground">Submit your credentials for admin review. Your restricted workspace unlocks after approval.</p>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Input placeholder="Full name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+            <Input placeholder="Professional title" value={professionalTitle} onChange={(e) => setProfessionalTitle(e.target.value)} />
+            <Input placeholder="License / registration number" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} />
+            <Input placeholder="Institution / organization" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+          </div>
+          <Textarea placeholder="Why do you need this role? Include research focus or clinical scope." value={reason} onChange={(e) => setReason(e.target.value)} />
+        </Card>
+      )}
       <Button className="mt-8" size="lg" disabled={!picked || busy} onClick={save}>Continue</Button>
       <p className="mt-4 text-xs text-muted-foreground">
-        For security, the Psychologist and Researcher roles must be granted by an administrator after credential verification.
+        For security, Practitioner and Researcher roles must be approved by an administrator after credential verification.
       </p>
     </div>
   );
