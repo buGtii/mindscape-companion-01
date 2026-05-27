@@ -25,7 +25,7 @@ const CRITERIA = [
 ];
 
 function Page() {
-  const { roles } = useAuth();
+  const { user, roles } = useAuth();
   const qc = useQueryClient();
   const [grantUid, setGrantUid] = useState("");
   const [grantRole, setGrantRole] = useState<"psychologist" | "researcher">("psychologist");
@@ -93,6 +93,7 @@ function Page() {
       status,
       criteria: criteriaJson,
       admin_note: adminNote,
+      reviewed_by: user?.id,
       reviewed_at: new Date().toISOString(),
     }).eq("id", request.id);
     if (error) return toast.error(error.message);
