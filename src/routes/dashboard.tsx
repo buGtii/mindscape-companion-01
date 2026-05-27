@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { Disclaimer } from "@/components/disclaimer";
 import { Button } from "@/components/ui/button";
-import { Bookmark, Search, GraduationCap, Stethoscope, Microscope, HeartHandshake } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Bookmark, Search, GraduationCap, Stethoscope, Microscope, HeartHandshake, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
@@ -15,6 +17,7 @@ function Dashboard() {
   const { user, roles, loading } = useAuth();
   const navigate = useNavigate();
   const [bookmarks, setBookmarks] = useState<Bm[]>([]);
+  const [requests, setRequests] = useState<any[]>([]);
 
   useEffect(() => {
     if (loading) return;
@@ -22,6 +25,15 @@ function Dashboard() {
     if (roles.length === 0) { navigate({ to: "/onboarding" }); return; }
     supabase.from("bookmarks").select("disorders(name,slug,summary)").eq("user_id", user.id)
       .then(({ data }) => setBookmarks((data as unknown as Bm[]) ?? []));
+    supabase.from("role_approval_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false })
+      .then(({ data }) => setRequests(data ?? []));
+    const ch = supabase.channel(`approval-user:${user.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "role_approval_requests", filter: `user_id=eq.${user.id}` }, () => {
+        supabase.from("role_approval_requests").select("*").eq("user_id", user.id).order("created_at", { ascending: false })
+          .then(({ data }) => setRequests(data ?? []));
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [user, roles, loading, navigate]);
 
   const role = roles.find((r) => r !== "patient") ?? roles[0];
@@ -46,6 +58,21 @@ function Dashboard() {
           </div>
           <Button asChild><Link to="/search"><Search className="mr-1.5 h-4 w-4" />Browse DSM</Link></Button>
         </div>
+
+        {requests.length > 0 && (
+          <Card className="mt-6 p-5">
+            <h2 className="flex items-center gap-2 font-display text-xl"><Clock className="h-5 w-5 text-primary" /> Approval status</h2>
+            <div className="mt-3 grid gap-2">
+              {requests.map((r) => (
+                <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-background/50 p-3 text-sm">
+                  <span>{r.requested_role === "psychologist" ? "Practitioner" : "Researcher"} access</span>
+                  <Badge variant={r.status === "approved" ? "default" : "secondary"}>{r.status}</Badge>
+                  {r.admin_note && <p className="w-full text-xs text-muted-foreground">Admin note: {r.admin_note}</p>}
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         <section className="mt-10">
           <h2 className="font-display text-xl flex items-center gap-2"><Bookmark className="h-5 w-5" /> Your bookmarks</h2>

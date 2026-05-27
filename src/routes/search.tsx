@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 
 export const Route = createFileRoute("/search")({ component: SearchPage });
 
-type Row = { id: string; name: string; slug: string; summary: string; dsm_code: string | null; disorder_categories: { name: string } | null };
+type Row = { id: string; name: string; slug: string; summary: string; dsm_code: string | null; common_symptoms: string[] | null; synonyms: string[] | null; disorder_categories: { name: string } | null };
 
 function SearchPage() {
   const [q, setQ] = useState("");
@@ -18,10 +18,16 @@ function SearchPage() {
     let active = true;
     const run = async () => {
       setLoading(true);
-      let query = supabase.from("disorders").select("id,name,slug,summary,dsm_code,disorder_categories(name)").order("name").limit(100);
-      if (q.trim()) query = query.or(`name.ilike.%${q}%,summary.ilike.%${q}%`);
-      const { data } = await query;
-      if (active) { setRows((data as unknown as Row[]) ?? []); setLoading(false); }
+      const { data } = await supabase.from("disorders").select("id,name,slug,summary,dsm_code,common_symptoms,synonyms,disorder_categories(name)").order("name").limit(1000);
+      const term = q.trim().toLowerCase();
+      const filtered = ((data as unknown as Row[]) ?? []).filter((r) => !term
+        || r.name.toLowerCase().includes(term)
+        || (r.summary ?? "").toLowerCase().includes(term)
+        || (r.dsm_code ?? "").toLowerCase().includes(term)
+        || (r.common_symptoms ?? []).some((s) => s.toLowerCase().includes(term))
+        || (r.synonyms ?? []).some((s) => s.toLowerCase().includes(term))
+      ).slice(0, 100);
+      if (active) { setRows(filtered); setLoading(false); }
     };
     const t = setTimeout(run, 200);
     return () => { active = false; clearTimeout(t); };
@@ -50,6 +56,11 @@ function SearchPage() {
               </div>
               {r.disorder_categories && <p className="mt-1 text-xs text-accent-foreground">{r.disorder_categories.name}</p>}
               <p className="mt-2 text-sm text-muted-foreground">{r.summary}</p>
+              {(r.common_symptoms ?? []).length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {(r.common_symptoms ?? []).slice(0, 5).map((s) => <span key={s} className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{s}</span>)}
+                </div>
+              )}
             </Link>
           ))}
         </div>

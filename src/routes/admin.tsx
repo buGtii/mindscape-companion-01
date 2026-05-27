@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
-import { ShieldCheck, UserPlus } from "lucide-react";
+import { ShieldCheck, UserPlus, ClipboardCheck } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({ component: Page });
 
@@ -24,11 +25,12 @@ const CRITERIA = [
 ];
 
 function Page() {
-  const { roles } = useAuth();
+  const { user, roles } = useAuth();
   const qc = useQueryClient();
   const [grantUid, setGrantUid] = useState("");
   const [grantRole, setGrantRole] = useState<"psychologist" | "researcher">("psychologist");
   const [criteria, setCriteria] = useState<Record<string, boolean>>({});
+  const [adminNote, setAdminNote] = useState("");
 
   const { data: psys } = useQuery({
     queryKey: ["admin-psy"],
@@ -38,6 +40,20 @@ function Page() {
     queryKey: ["admin-roles"],
     queryFn: async () => (await supabase.from("user_roles").select("user_id, role, created_at").order("created_at", { ascending: false })).data ?? [],
   });
+  const { data: requests } = useQuery({
+    queryKey: ["admin-approval-requests"],
+    queryFn: async () => (await supabase.from("role_approval_requests").select("*").order("created_at", { ascending: false })).data ?? [],
+  });
+
+  useEffect(() => {
+    if (!roles.includes("admin")) return;
+    const ch = supabase.channel("admin-approvals")
+      .on("postgres_changes", { event: "*", schema: "public", table: "role_approval_requests" }, () => {
+        qc.invalidateQueries({ queryKey: ["admin-approval-requests"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [roles, qc]);
 
   if (!roles.includes("admin"))
     return <div className="min-h-screen bg-background"><SiteHeader /><div className="p-10 text-center text-muted-foreground">Admin only.</div></div>;
@@ -61,6 +77,32 @@ function Page() {
     setGrantUid("");
     setCriteria({});
     qc.invalidateQueries({ queryKey: ["admin-roles"] });
+  };
+
+  const reviewRequest = async (request: any, status: "approved" | "rejected") => {
+    if (status === "approved" && !allMet) { toast.error("Confirm all approval criteria first"); return; }
+    const criteriaJson = Object.fromEntries(CRITERIA.map((c) => [c, !!criteria[c]]));
+    if (status === "approved") {
+      const { error: roleError } = await supabase.from("user_roles").insert({ user_id: request.user_id, role: request.requested_role });
+      if (roleError && !roleError.message.includes("duplicate")) return toast.error(roleError.message);
+      if (request.requested_role === "psychologist") {
+        await supabase.from("psychologist_profiles").update({ verified: true }).eq("user_id", request.user_id);
+      }
+    }
+    const { error } = await supabase.from("role_approval_requests").update({
+      status,
+      criteria: criteriaJson,
+      admin_note: adminNote,
+      reviewed_by: user?.id,
+      reviewed_at: new Date().toISOString(),
+    }).eq("id", request.id);
+    if (error) return toast.error(error.message);
+    toast.success(status === "approved" ? "Access approved" : "Request rejected");
+    setAdminNote("");
+    setCriteria({});
+    qc.invalidateQueries({ queryKey: ["admin-approval-requests"] });
+    qc.invalidateQueries({ queryKey: ["admin-roles"] });
+    qc.invalidateQueries({ queryKey: ["admin-psy"] });
   };
 
   const revoke = async (uid: string, role: string) => {
@@ -87,7 +129,34 @@ function Page() {
               </label>
             ))}
           </div>
+          <Textarea className="mt-4" placeholder="Optional admin note shown to the user" value={adminNote} onChange={(e) => setAdminNote(e.target.value)} />
         </Card>
+
+        <h2 className="mt-10 flex items-center gap-2 font-display text-xl"><ClipboardCheck className="h-5 w-5 text-primary" /> Pending approval requests</h2>
+        <div className="mt-3 grid gap-3">
+          {(requests ?? []).filter((r: any) => r.status === "pending").length === 0 && <p className="text-sm text-muted-foreground">No pending requests.</p>}
+          {(requests ?? []).filter((r: any) => r.status === "pending").map((r: any) => (
+            <Card key={r.id} className="p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">{r.display_name ?? "Unnamed user"}</span>
+                    <Badge variant="secondary">{r.requested_role === "psychologist" ? "Practitioner" : "Researcher"}</Badge>
+                    <Badge variant="outline">Pending</Badge>
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">{r.professional_title || "No title"} · {r.organization || "No organization"}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">License/registration: {r.license_number || "Not provided"}</div>
+                  {r.reason && <p className="mt-2 text-sm text-muted-foreground">{r.reason}</p>}
+                  <div className="mt-2 font-mono text-[10px] text-muted-foreground">{r.user_id}</div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => reviewRequest(r, "rejected")}>Reject</Button>
+                  <Button onClick={() => reviewRequest(r, "approved")} disabled={!allMet}>Approve</Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
 
         <Card className="mt-6 p-5">
           <h2 className="flex items-center gap-2 font-display text-xl"><UserPlus className="h-5 w-5 text-primary" /> Grant role by user ID</h2>
