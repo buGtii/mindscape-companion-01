@@ -180,6 +180,51 @@ export type Database = {
           },
         ]
       }
+      client_profiles: {
+        Row: {
+          consent_share_with_practitioner: boolean
+          created_at: string
+          current_medications: string | null
+          date_of_birth: string | null
+          emergency_contact: string | null
+          full_name: string
+          gender: string | null
+          history_summary: string | null
+          id: string
+          pronouns: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          consent_share_with_practitioner?: boolean
+          created_at?: string
+          current_medications?: string | null
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          full_name: string
+          gender?: string | null
+          history_summary?: string | null
+          id?: string
+          pronouns?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          consent_share_with_practitioner?: boolean
+          created_at?: string
+          current_medications?: string | null
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          full_name?: string
+          gender?: string | null
+          history_summary?: string | null
+          id?: string
+          pronouns?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       clinical_assessments: {
         Row: {
           checked_criteria: Json
@@ -558,6 +603,45 @@ export type Database = {
           },
         ]
       }
+      researcher_profiles: {
+        Row: {
+          created_at: string
+          current_projects: string | null
+          field: string | null
+          full_name: string
+          id: string
+          institution: string | null
+          orcid: string | null
+          publications: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_projects?: string | null
+          field?: string | null
+          full_name: string
+          id?: string
+          institution?: string | null
+          orcid?: string | null
+          publications?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_projects?: string | null
+          field?: string | null
+          full_name?: string
+          id?: string
+          institution?: string | null
+          orcid?: string | null
+          publications?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       role_approval_requests: {
         Row: {
           admin_note: string | null
@@ -609,6 +693,42 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      student_profiles: {
+        Row: {
+          created_at: string
+          degree: string | null
+          full_name: string
+          id: string
+          interests: string[]
+          university: string | null
+          updated_at: string
+          user_id: string
+          year_of_study: number | null
+        }
+        Insert: {
+          created_at?: string
+          degree?: string | null
+          full_name: string
+          id?: string
+          interests?: string[]
+          university?: string | null
+          updated_at?: string
+          user_id: string
+          year_of_study?: number | null
+        }
+        Update: {
+          created_at?: string
+          degree?: string | null
+          full_name?: string
+          id?: string
+          interests?: string[]
+          university?: string | null
+          updated_at?: string
+          user_id?: string
+          year_of_study?: number | null
         }
         Relationships: []
       }

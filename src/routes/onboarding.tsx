@@ -33,6 +33,14 @@ function Onboarding() {
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [loading, user, navigate]);
 
+  const profilePath = (role: AppRole): string => {
+    if (role === "student") return "/profile/student";
+    if (role === "patient") return "/profile/client";
+    if (role === "researcher") return "/profile/researcher";
+    if (role === "psychologist") return "/psychologist/setup";
+    return "/dashboard";
+  };
+
   const save = async () => {
     if (!picked || !user) return;
     const choice = choices.find((c) => c.role === picked)!;
@@ -51,15 +59,15 @@ function Onboarding() {
       if (error) {
         if (error.message.includes("duplicate")) {
           toast.info("Your approval request is already pending.");
-          navigate({ to: "/dashboard" });
+          navigate({ to: profilePath(picked) as never });
           return;
         }
         toast.error(error.message);
         return;
       }
       localStorage.setItem("lumen:selected-role", picked);
-      toast.success("Approval request submitted. You can keep using the app as a Client while admin reviews it.");
-      navigate({ to: "/dashboard" });
+      toast.success("Approval request submitted. Complete your profile while admin reviews it.");
+      navigate({ to: profilePath(picked) as never });
       return;
     }
     setBusy(true);
@@ -72,7 +80,7 @@ function Onboarding() {
     }
     await refreshRoles();
     localStorage.setItem("lumen:selected-role", picked);
-    navigate({ to: "/dashboard" });
+    navigate({ to: profilePath(picked) as never });
   };
 
   const selectedChoice = choices.find((c) => c.role === picked);
