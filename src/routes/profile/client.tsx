@@ -27,8 +27,7 @@ function Page() {
   useEffect(() => {
     if (!user) return;
     supabase.from("client_profiles").select("*").eq("user_id", user.id).maybeSingle()
-      .then(({ data }) => { if (data) setForm({ ...form, ...data, date_of_birth: data.date_of_birth ?? "" } as never); });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      .then(({ data }) => { if (data) setForm((f) => ({ ...f, ...data, date_of_birth: data.date_of_birth ?? "" } as never)); });
   }, [user]);
 
   const save = async () => {
