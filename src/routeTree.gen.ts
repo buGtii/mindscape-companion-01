@@ -23,6 +23,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PsychologistsIdRouteImport } from './routes/psychologists.$id'
 import { Route as PsychologistSetupRouteImport } from './routes/psychologist.setup'
+import { Route as ProfileStudentRouteImport } from './routes/profile.student'
+import { Route as ProfileResearcherRouteImport } from './routes/profile.researcher'
+import { Route as ProfileClientRouteImport } from './routes/profile.client'
 import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
 import { Route as LearnQuizRouteImport } from './routes/learn.quiz'
 import { Route as DisordersSlugRouteImport } from './routes/disorders.$slug'
@@ -97,6 +100,21 @@ const PsychologistSetupRoute = PsychologistSetupRouteImport.update({
   path: '/psychologist/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileStudentRoute = ProfileStudentRouteImport.update({
+  id: '/profile/student',
+  path: '/profile/student',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileResearcherRoute = ProfileResearcherRouteImport.update({
+  id: '/profile/researcher',
+  path: '/profile/researcher',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileClientRoute = ProfileClientRouteImport.update({
+  id: '/profile/client',
+  path: '/profile/client',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
   id: '/messages/$bookingId',
   path: '/messages/$bookingId',
@@ -129,6 +147,9 @@ export interface FileRoutesByFullPath {
   '/disorders/$slug': typeof DisordersSlugRoute
   '/learn/quiz': typeof LearnQuizRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/profile/client': typeof ProfileClientRoute
+  '/profile/researcher': typeof ProfileResearcherRoute
+  '/profile/student': typeof ProfileStudentRoute
   '/psychologist/setup': typeof PsychologistSetupRoute
   '/psychologists/$id': typeof PsychologistsIdRoute
 }
@@ -148,6 +169,9 @@ export interface FileRoutesByTo {
   '/disorders/$slug': typeof DisordersSlugRoute
   '/learn/quiz': typeof LearnQuizRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/profile/client': typeof ProfileClientRoute
+  '/profile/researcher': typeof ProfileResearcherRoute
+  '/profile/student': typeof ProfileStudentRoute
   '/psychologist/setup': typeof PsychologistSetupRoute
   '/psychologists/$id': typeof PsychologistsIdRoute
 }
@@ -168,6 +192,9 @@ export interface FileRoutesById {
   '/disorders/$slug': typeof DisordersSlugRoute
   '/learn/quiz': typeof LearnQuizRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/profile/client': typeof ProfileClientRoute
+  '/profile/researcher': typeof ProfileResearcherRoute
+  '/profile/student': typeof ProfileStudentRoute
   '/psychologist/setup': typeof PsychologistSetupRoute
   '/psychologists/$id': typeof PsychologistsIdRoute
 }
@@ -189,6 +216,9 @@ export interface FileRouteTypes {
     | '/disorders/$slug'
     | '/learn/quiz'
     | '/messages/$bookingId'
+    | '/profile/client'
+    | '/profile/researcher'
+    | '/profile/student'
     | '/psychologist/setup'
     | '/psychologists/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -208,6 +238,9 @@ export interface FileRouteTypes {
     | '/disorders/$slug'
     | '/learn/quiz'
     | '/messages/$bookingId'
+    | '/profile/client'
+    | '/profile/researcher'
+    | '/profile/student'
     | '/psychologist/setup'
     | '/psychologists/$id'
   id:
@@ -227,6 +260,9 @@ export interface FileRouteTypes {
     | '/disorders/$slug'
     | '/learn/quiz'
     | '/messages/$bookingId'
+    | '/profile/client'
+    | '/profile/researcher'
+    | '/profile/student'
     | '/psychologist/setup'
     | '/psychologists/$id'
   fileRoutesById: FileRoutesById
@@ -246,6 +282,9 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   DisordersSlugRoute: typeof DisordersSlugRoute
   MessagesBookingIdRoute: typeof MessagesBookingIdRoute
+  ProfileClientRoute: typeof ProfileClientRoute
+  ProfileResearcherRoute: typeof ProfileResearcherRoute
+  ProfileStudentRoute: typeof ProfileStudentRoute
   PsychologistSetupRoute: typeof PsychologistSetupRoute
 }
 
@@ -349,6 +388,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PsychologistSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/student': {
+      id: '/profile/student'
+      path: '/profile/student'
+      fullPath: '/profile/student'
+      preLoaderRoute: typeof ProfileStudentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/researcher': {
+      id: '/profile/researcher'
+      path: '/profile/researcher'
+      fullPath: '/profile/researcher'
+      preLoaderRoute: typeof ProfileResearcherRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/client': {
+      id: '/profile/client'
+      path: '/profile/client'
+      fullPath: '/profile/client'
+      preLoaderRoute: typeof ProfileClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/messages/$bookingId': {
       id: '/messages/$bookingId'
       path: '/messages/$bookingId'
@@ -410,6 +470,9 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   DisordersSlugRoute: DisordersSlugRoute,
   MessagesBookingIdRoute: MessagesBookingIdRoute,
+  ProfileClientRoute: ProfileClientRoute,
+  ProfileResearcherRoute: ProfileResearcherRoute,
+  ProfileStudentRoute: ProfileStudentRoute,
   PsychologistSetupRoute: PsychologistSetupRoute,
 }
 export const routeTree = rootRouteImport
