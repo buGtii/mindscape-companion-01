@@ -38,6 +38,36 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          entity: string
+          entity_id: string | null
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+          metadata?: Json
+        }
+        Relationships: []
+      }
       availability_slots: {
         Row: {
           created_at: string
@@ -153,6 +183,7 @@ export type Database = {
       clinical_assessments: {
         Row: {
           checked_criteria: Json
+          client_id: string | null
           created_at: string
           disorder_id: string | null
           id: string
@@ -165,6 +196,7 @@ export type Database = {
         }
         Insert: {
           checked_criteria?: Json
+          client_id?: string | null
           created_at?: string
           disorder_id?: string | null
           id?: string
@@ -177,6 +209,7 @@ export type Database = {
         }
         Update: {
           checked_criteria?: Json
+          client_id?: string | null
           created_at?: string
           disorder_id?: string | null
           id?: string
