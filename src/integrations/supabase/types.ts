@@ -464,6 +464,39 @@ export type Database = {
           },
         ]
       }
+      journal_entries: {
+        Row: {
+          ai_tone: string | null
+          body: string
+          created_at: string
+          crisis_flag: boolean
+          id: string
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_tone?: string | null
+          body: string
+          created_at?: string
+          crisis_flag?: boolean
+          id?: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_tone?: string | null
+          body?: string
+          created_at?: string
+          crisis_flag?: boolean
+          id?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           booking_id: string
@@ -495,6 +528,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mood_entries: {
+        Row: {
+          created_at: string
+          id: string
+          mood_score: number
+          note: string | null
+          tags: string[]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mood_score: number
+          note?: string | null
+          tags?: string[]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mood_score?: number
+          note?: string | null
+          tags?: string[]
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -692,6 +752,33 @@ export type Database = {
           reviewed_by?: string | null
           status?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sleep_entries: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          quality: number
+          sleep_hours: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          quality: number
+          sleep_hours: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          quality?: number
+          sleep_hours?: number
           user_id?: string
         }
         Relationships: []
