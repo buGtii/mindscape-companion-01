@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WellnessRouteImport } from './routes/wellness'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as PsychologistsRouteImport } from './routes/psychologists'
@@ -30,6 +31,11 @@ import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookin
 import { Route as LearnQuizRouteImport } from './routes/learn.quiz'
 import { Route as DisordersSlugRouteImport } from './routes/disorders.$slug'
 
+const WellnessRoute = WellnessRouteImport.update({
+  id: '/wellness',
+  path: '/wellness',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/psychologists': typeof PsychologistsRouteWithChildren
   '/research': typeof ResearchRoute
   '/search': typeof SearchRoute
+  '/wellness': typeof WellnessRoute
   '/disorders/$slug': typeof DisordersSlugRoute
   '/learn/quiz': typeof LearnQuizRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/psychologists': typeof PsychologistsRouteWithChildren
   '/research': typeof ResearchRoute
   '/search': typeof SearchRoute
+  '/wellness': typeof WellnessRoute
   '/disorders/$slug': typeof DisordersSlugRoute
   '/learn/quiz': typeof LearnQuizRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/psychologists': typeof PsychologistsRouteWithChildren
   '/research': typeof ResearchRoute
   '/search': typeof SearchRoute
+  '/wellness': typeof WellnessRoute
   '/disorders/$slug': typeof DisordersSlugRoute
   '/learn/quiz': typeof LearnQuizRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/psychologists'
     | '/research'
     | '/search'
+    | '/wellness'
     | '/disorders/$slug'
     | '/learn/quiz'
     | '/messages/$bookingId'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/psychologists'
     | '/research'
     | '/search'
+    | '/wellness'
     | '/disorders/$slug'
     | '/learn/quiz'
     | '/messages/$bookingId'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/psychologists'
     | '/research'
     | '/search'
+    | '/wellness'
     | '/disorders/$slug'
     | '/learn/quiz'
     | '/messages/$bookingId'
@@ -280,6 +292,7 @@ export interface RootRouteChildren {
   PsychologistsRoute: typeof PsychologistsRouteWithChildren
   ResearchRoute: typeof ResearchRoute
   SearchRoute: typeof SearchRoute
+  WellnessRoute: typeof WellnessRoute
   DisordersSlugRoute: typeof DisordersSlugRoute
   MessagesBookingIdRoute: typeof MessagesBookingIdRoute
   ProfileClientRoute: typeof ProfileClientRoute
@@ -290,6 +303,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wellness': {
+      id: '/wellness'
+      path: '/wellness'
+      fullPath: '/wellness'
+      preLoaderRoute: typeof WellnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -468,6 +488,7 @@ const rootRouteChildren: RootRouteChildren = {
   PsychologistsRoute: PsychologistsRouteWithChildren,
   ResearchRoute: ResearchRoute,
   SearchRoute: SearchRoute,
+  WellnessRoute: WellnessRoute,
   DisordersSlugRoute: DisordersSlugRoute,
   MessagesBookingIdRoute: MessagesBookingIdRoute,
   ProfileClientRoute: ProfileClientRoute,
@@ -478,3 +499,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

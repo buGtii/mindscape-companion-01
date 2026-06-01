@@ -19,6 +19,7 @@ export function SiteHeader() {
           <Link to="/analyzer" className="hover:text-foreground">AI Analyzer</Link>
           <Link to="/psychologists" className="hover:text-foreground">Practitioners</Link>
           {user && <Link to="/bookings" className="hover:text-foreground">Bookings</Link>}
+          {is("patient") && <Link to="/wellness" className="hover:text-foreground">Wellness</Link>}
           {is("student") && <Link to="/learn" className="hover:text-foreground">Learn</Link>}
           {is("researcher") && <Link to="/research" className="hover:text-foreground">Research</Link>}
           {is("psychologist") && <Link to="/clinical" className="hover:text-foreground">Clinical</Link>}
